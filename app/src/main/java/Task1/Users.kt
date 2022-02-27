@@ -84,7 +84,7 @@ fun users () {
     var userList = mutableListOf<User>()
     userList.add(user1)
     userList.apply {
-        userList.add(User(3, "Zeus", 99999, Type.FULL))
+        this.add(User(3, "Zeus", 99999, Type.FULL))
         userList.add(User(2, "Io", 18, Type.DEMO))
 
     }
