@@ -15,7 +15,7 @@ class RecyclerAdapter(private val list: List<ContactModel>) :
     }
 
     override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
-        holder.textViewName.text=(list.get(position).name)
+        holder.textViewName.text = (list.get(position).getNames())
     }
 
     override fun getItemCount(): Int {

@@ -1,7 +1,7 @@
 package com.example.studying
 
 class ContactModel {
-    var name:String?=null
+    private var name:String?=null
 
     fun setNames(name:String?){
         this.name=name

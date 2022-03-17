@@ -6,7 +6,7 @@
     android:layout_marginTop="16dp"
     android:layout_marginRight="16dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/black">
+    android:background="@color/purple_200">
     <TextView
         android:id="@+id/textName"
         android:layout_width="wrap_content"
@@ -15,17 +15,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="8dp"
         android:layout_marginLeft="8dp"
-        android:textColor="@color/white"
+        android:textColor="@color/teal_200"
         android:textSize="25sp"/>
-    <TextView
-        android:id="@+id/textNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/textName"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"
-        android:textColor="@color/white"
-        android:textSize="16sp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

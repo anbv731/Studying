@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import com.example.studying.databinding.ActivityMainBinding
 
-
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,17 +13,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.ButtontoContacts.setOnClickListener {
             if (savedInstanceState == null) {
-                val fragment=ContactsFragment()
+                val fragment = ContactsFragment()
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.placeholder, fragment,null)
+                    .replace(R.id.placeholder, fragment, null)
                     .commit()
             }
-            it.visibility = View.GONE
-
+            it.visibility=View.GONE
         }
-
-
     }
-
-
 }
