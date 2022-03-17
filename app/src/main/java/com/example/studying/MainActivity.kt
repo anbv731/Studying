@@ -1,15 +1,30 @@
 package com.example.studying
 
-import Task1.books
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import com.example.studying.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.settings)
-        books()
-        users()
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.ButtontoContacts.setOnClickListener {
+            if (savedInstanceState == null) {
+                val fragment=ContactsFragment()
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.placeholder, fragment,null)
+                    .commit()
+            }
+            it.visibility = View.GONE
+
+        }
+
+
     }
+
 
 }

@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/tatiana/StudioProjects/Studying2/app/src/main/res/layout-v28/reels.xml" value="0.146875" />
         <entry key="..\:/Users/tatiana/StudioProjects/Studying2/app/src/main/res/layout/activity_main.xml" value="0.31927083333333334" />
+        <entry key="..\:/Users/tatiana/StudioProjects/Studying2/app/src/main/res/layout/contacts.xml" value="0.31927083333333334" />
+        <entry key="..\:/Users/tatiana/StudioProjects/Studying2/app/src/main/res/layout/item_contact.xml" value="0.31927083333333334" />
       </map>
     </option>
   </component>
