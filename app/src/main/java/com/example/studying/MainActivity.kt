@@ -1,25 +1,28 @@
 package com.example.studying
 
 import android.app.IntentService
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.IOException
 import java.util.concurrent.Executors
 
+
 class MainActivity : AppCompatActivity() {
-    lateinit var recycler: RecyclerView
-    lateinit var image: ImageView
-    lateinit var list: List<Something>
     lateinit var savedJson: String
+    lateinit var myBroadcastReceiver: MyBroadcastReceiver
+    lateinit var recycler: RecyclerView
+    lateinit var image: ProgressBar
+    lateinit var list: List<Something>
 
     companion object {
         const val IS_FETCHED = "IS_FETCHED"
@@ -36,16 +39,25 @@ class MainActivity : AppCompatActivity() {
             isFetched = savedInstanceState.getBoolean(IS_FETCHED)
             savedJson = savedInstanceState.getString(JSON)!!
         }
-        image = findViewById(R.id.imageviewId)
-        val circularProgressDrawable = CircularProgressDrawable(this)
-        circularProgressDrawable.strokeWidth = 5f
-        circularProgressDrawable.centerRadius = 30f
-        circularProgressDrawable.start()
-        image.setImageDrawable(circularProgressDrawable)
+        image = findViewById(R.id.progressBar)
         recycler = findViewById(R.id.recycler)
         recycler.layoutManager = LinearLayoutManager(this)
-        //usingThread()
-        usingExecutor()
+        usingThread()
+        // usingExecutor()
+        //usingIntentService()
+
+        myBroadcastReceiver = MyBroadcastReceiver()
+        val intentFilter = IntentFilter(
+            MyIntentService().ACTION_MYINTENTSERVICE
+        )
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT)
+        registerReceiver(myBroadcastReceiver, intentFilter)
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(myBroadcastReceiver)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -81,8 +93,9 @@ class MainActivity : AppCompatActivity() {
     fun usingExecutor() {
         val executor = Executors.newSingleThreadExecutor()
 
-        executor.execute {run{
-            if (!isFetched) {
+        executor.execute {
+            run {
+                if (!isFetched) {
                     Thread.sleep(5000)
                     runOnUiThread {
                         image.visibility = View.GONE
@@ -94,42 +107,66 @@ class MainActivity : AppCompatActivity() {
                     runOnUiThread {
                         recycler.adapter = RecyclerAdapter(list)
                     }
-            }else {
-                list = parseJson(savedJson)
-                image.visibility = View.GONE
-                recycler.adapter = RecyclerAdapter(list)
+                } else {
+                    list = parseJson(savedJson)
+                    image.visibility = View.GONE
+                    recycler.adapter = RecyclerAdapter(list)
+                }
             }
         }
+    }
+
+    fun usingIntentService() {
+        if (!isFetched) {
+            val myintentService = Intent(this, MyIntentService::class.java)
+            startService(myintentService)
+        } else {
+            image.visibility = View.GONE
+            recycler.adapter = RecyclerAdapter(parseJson(savedJson))
+        }
+
+    }
+
+    inner class MyBroadcastReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            savedJson = intent
+                .getStringExtra(MyIntentService().EXTRA_KEY_OUT)!!
+            isFetched = true
+            image.visibility = View.GONE
+            recycler.adapter = RecyclerAdapter(parseJson(savedJson))
         }
     }
-fun usingIntentService(){
-    val myintentService= Intent(this,MyIntentService::class.java)
-    startService(myintentService.putExtra("task","hsdsag"))
-}
-class MyIntentService :IntentService("MyName"){
-    override fun onHandleIntent(p0: Intent?) {
-        val label: String = p0?.getStringExtra("task")!!
-        Thread.sleep(5000)
 
-    }
-
-}
-    fun parseJson(json: String?): List<Something> {
-
-        val gson = Gson()
-        val listSomthingType = object : TypeToken<List<Something>>() {}.type
-        return gson.fromJson(json, listSomthingType)
-    }
-
-    fun getJson(context: Context, fileName: String): String? {
-        val jsonString: String
-        try {
-            jsonString = context.assets.open(fileName).bufferedReader().use { it.readText() }
-        } catch (ioException: IOException) {
-            ioException.printStackTrace()
-            return null
+    class MyIntentService : IntentService("MyName") {
+        val ACTION_MYINTENTSERVICE = "actionintentservice"
+        val EXTRA_KEY_OUT = "EXTRA_OUT"
+        lateinit var extraOut: String
+        override fun onHandleIntent(p0: Intent?) {
+            Thread.sleep(5000)
+            extraOut = getJson(applicationContext, "irlix.json")!!
+            val responseIntent = Intent()
+            responseIntent.action = ACTION_MYINTENTSERVICE
+            responseIntent.addCategory(Intent.CATEGORY_DEFAULT)
+            responseIntent.putExtra(EXTRA_KEY_OUT, extraOut)
+            sendBroadcast(responseIntent)
         }
-        return jsonString
     }
+}
 
+fun getJson(context: Context, fileName: String): String? {
+    val jsonString: String
+    try {
+        jsonString = context.assets.open(fileName).bufferedReader().use { it.readText() }
+    } catch (ioException: IOException) {
+        ioException.printStackTrace()
+        return null
+    }
+    return jsonString
+}
+
+fun parseJson(json: String?): List<Something> {
+
+    val gson = Gson()
+    val listSomthingType = object : TypeToken<List<Something>>() {}.type
+    return gson.fromJson(json, listSomthingType)
 }

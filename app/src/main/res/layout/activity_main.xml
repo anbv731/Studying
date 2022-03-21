@@ -9,6 +9,11 @@
         android:id="@+id/imageviewId"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@style/MaterialAlertDialog.Material3.Title.Icon.CenterStacked"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
