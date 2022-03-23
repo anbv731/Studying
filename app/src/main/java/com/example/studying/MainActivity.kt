@@ -1,14 +1,13 @@
 package com.example.studying
 
-import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.databinding.DataBindingUtil
@@ -16,7 +15,10 @@ import com.example.studying.databinding.ActivityMainBinding
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
 import com.google.firebase.messaging.FirebaseMessaging
+
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -27,7 +29,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding: ActivityMainBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_main)
-        createNotificationChannel()
+
+//        val options = FirebaseOptions.Builder()
+//            .setApplicationId("1:137191155420:android:219235fa42e9f2cf833619") // Required for Analytics.
+//            .setProjectId("studying-f5fcd") // Required for Firebase Installations.
+//            .setApiKey("AIzaSyBcTMbNddAxKuxCLtWIuirFWCIZh2AY3sU") // Required for Auth.
+//            .build()
+//        FirebaseApp.initializeApp(this, options, "Studying")
+createNotificationChannel()
         binding.buttonId.setOnClickListener {
             globalNotification()
         }
@@ -35,14 +44,31 @@ class MainActivity : AppCompatActivity() {
     private fun globalNotification(){
         checkGoogleServices()
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task->
-            if (task.isSuccessful) {
+            if (!task.isSuccessful) {
                 return@OnCompleteListener
             }
+            else{println("е удалось получить токен"+task.toString())}
             val token=task.result
+            println("XX"+token.toString()+"XX")
             Toast.makeText(baseContext,token,Toast.LENGTH_SHORT).show()
         })
+
+//        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+//            if (!task.isSuccessful) {
+//                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+//                return@OnCompleteListener
+//            }
+//
+//            // Get new FCM registration token
+//            val token = task.result
+//
+//            // Log and toast
+////            val msg = getString(R.string.msg_token_fmt, token)
+////            Log.d(TAG, msg)
+////            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+       // })
     }
-   private fun localNotification(){
+   public fun localNotification(){
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_plaine)
             .setContentText("Вот такое вот уведомление")
