@@ -14,12 +14,14 @@ import java.security.AccessController.getContext
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
+        Log.i(
+            "Messaging Service",
+            message.notification?.title!! + " " + message.notification?.body!!
+        )
+
         val builder = NotificationCompat.Builder(this, MainActivity.CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_plaine)
             .setContentTitle(message.notification?.title)
-            .setSubText("subtext")
-
-            .setSettingsText("settings")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setStyle(
                 NotificationCompat.BigTextStyle()
@@ -35,7 +37,5 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         with(NotificationManagerCompat.from(this)) {
             notify(42, builder.build())
         }
-
-
     }
 }
