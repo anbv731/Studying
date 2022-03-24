@@ -18,24 +18,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             "Messaging Service",
             message.notification?.title!! + " " + message.notification?.body!!
         )
-
-        val builder = NotificationCompat.Builder(this, MainActivity.CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_plaine)
-            .setContentTitle(message.notification?.title)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setStyle(
-                NotificationCompat.BigTextStyle()
-                    .bigText(message.notification?.body)
-            ).setContentIntent(
-                PendingIntent.getActivity(
-                    applicationContext,
-                    0, Intent(),
-                    PendingIntent.FLAG_IMMUTABLE
-                )
-            )
-            .setAutoCancel(true)
-        with(NotificationManagerCompat.from(this)) {
-            notify(42, builder.build())
-        }
+        LocalNotification().sendNotification(this,message.notification?.title!!,message.notification?.body!!)
     }
 }
