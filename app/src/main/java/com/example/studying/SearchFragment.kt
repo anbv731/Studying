@@ -14,10 +14,8 @@ import com.example.studying.databinding.SearchBinding
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.*
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableOnSubscribe
-import io.reactivex.rxjava3.core.ObservableSource
-import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.io.IOException
 import java.util.*
@@ -47,6 +45,7 @@ class SearchFragment : Fragment(R.layout.search) {
 
         //setList(parseJson(getJson(requireContext(), "irlix.json")))
 
+
         Observable.create(ObservableOnSubscribe<String> { subscriber ->
             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextChange(text: String?): Boolean {
@@ -61,27 +60,39 @@ class SearchFragment : Fragment(R.layout.search) {
 
 
             })
-        }).map { text -> text.lowercase(Locale.getDefault()).trim() }
+        }).subscribeOn(Schedulers.io())
+            .map { text -> text.lowercase(Locale.getDefault()).trim() }
             .debounce(500, TimeUnit.MILLISECONDS)
             .distinctUntilChanged()
             .observeOn(AndroidSchedulers.mainThread())
-            //.observeOn(Schedulers.computation())
             .subscribe { text ->
                 run {
                     if (text.isEmpty()) {
                         textView.visibility = View.VISIBLE
                         recyclerView.visibility = View.GONE
+                        println(Thread.currentThread().name)
                     } else {
                         textView.visibility = View.GONE
                         recyclerView.visibility = View.VISIBLE
-                        val list = parseJson(getJson(requireContext(), "irlix.json"))
-                        setList(list.filter { text in it.title })
+                        //setList(parseJson(getJson(requireContext(), "irlix.json")))
+                        getList()
+                            .subscribe({ emitter -> setList(emitter.filter { text in it.title })
+                            println(Thread.currentThread().name + " Thread for setList")})
+
+                        println(Thread.currentThread().name + " Thread")
                     }
 
                 }
 
             }
 
+    }
+
+    private fun getList(): Single<List<Event>> {
+        return Single.create<List<Event>> { emitter ->
+            val list = parseJson(getJson(requireContext(), "irlix.json"))
+            emitter.onSuccess(list)
+        }
     }
 
     private fun setList(list: List<Event>) {

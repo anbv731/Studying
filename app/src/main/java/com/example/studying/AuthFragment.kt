@@ -23,6 +23,10 @@ class AuthFragment : Fragment(R.layout.auth) {
     lateinit var editTextLogin: EditText
     lateinit var editTextPassword: EditText
     lateinit var button: Button
+    companion object {
+        const val LOGIN = "LOGIN"
+        const val PASSWORD = "PASSWORD"
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -33,6 +37,9 @@ class AuthFragment : Fragment(R.layout.auth) {
         editTextLogin = binding.textEditLogin
         editTextPassword = binding.textEditPassword
         button = binding.buttonAuth
+        if(savedInstanceState!=null){
+        editTextLogin.setText(savedInstanceState.getString(LOGIN))
+        editTextPassword.setText(savedInstanceState.getString(PASSWORD))}
         return root
     }
 
@@ -45,11 +52,17 @@ class AuthFragment : Fragment(R.layout.auth) {
             fragmentTransaction.replace(R.id.fragmentContainer, searchFragment)
             fragmentTransaction.commit()
         }
+
         startStream()
 
     }
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString(LOGIN, editTextLogin.text.toString())
+        outState.putString(PASSWORD,editTextPassword.text.toString())
+        super.onSaveInstanceState(outState)
+    }
 
-   private fun startStream() {
+    private fun startStream() {
         val isLoginValid =
             editTextLogin.afterTextChangeEvents().map { textview -> textview.view.text.length > 5 }
                 .distinctUntilChanged()
