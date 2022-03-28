@@ -49,7 +49,7 @@ class AuthFragment : Fragment(R.layout.auth) {
             val searchFragment: Fragment = SearchFragment()
             val fragmentTransaction = requireActivity()
                 .supportFragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.fragmentContainer, searchFragment)
+            fragmentTransaction.replace(R.id.fragmentContainer, searchFragment,)
             fragmentTransaction.commit()
         }
 

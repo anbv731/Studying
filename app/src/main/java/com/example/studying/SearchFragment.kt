@@ -30,7 +30,7 @@ class SearchFragment : Fragment(R.layout.search) {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = SearchBinding.inflate(inflater, container, false)
         val root: View = binding.root
         searchView = binding.searchView
@@ -42,25 +42,25 @@ class SearchFragment : Fragment(R.layout.search) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        //setList(parseJson(getJson(requireContext(), "irlix.json")))
-
-
         Observable.create(ObservableOnSubscribe<String> { subscriber ->
             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextChange(text: String?): Boolean {
+                override fun onQueryTextChange(text: String): Boolean {
                     subscriber.onNext(text)
                     return false
                 }
 
-                override fun onQueryTextSubmit(query: String?): Boolean {
+                override fun onQueryTextSubmit(query: String): Boolean {
                     subscriber.onNext(query)
                     return false
                 }
 
 
             })
-        }).subscribeOn(Schedulers.io())
+        }).doOnNext { println(Thread.currentThread().name + " Thread for onNext1") }
+            .subscribeOn(Schedulers.io())
+            .doOnNext { println(Thread.currentThread().name + " Thread for onNext2") }
+            .observeOn(Schedulers.newThread())
+            .doOnNext { println(Thread.currentThread().name + " Thread for onNext3") }
             .map { text -> text.lowercase(Locale.getDefault()).trim() }
             .debounce(500, TimeUnit.MILLISECONDS)
             .distinctUntilChanged()
@@ -70,14 +70,15 @@ class SearchFragment : Fragment(R.layout.search) {
                     if (text.isEmpty()) {
                         textView.visibility = View.VISIBLE
                         recyclerView.visibility = View.GONE
-                        println(Thread.currentThread().name)
+                        println(Thread.currentThread().name + " Thread for isEmpty")
                     } else {
                         textView.visibility = View.GONE
                         recyclerView.visibility = View.VISIBLE
-                        //setList(parseJson(getJson(requireContext(), "irlix.json")))
                         getList()
-                            .subscribe({ emitter -> setList(emitter.filter { text in it.title })
-                            println(Thread.currentThread().name + " Thread for setList")})
+                            .subscribe { emitter ->
+                                setList(emitter.filter { text in it.title })
+                                println(Thread.currentThread().name + " Thread for setList")
+                            }
 
                         println(Thread.currentThread().name + " Thread")
                     }
@@ -99,22 +100,22 @@ class SearchFragment : Fragment(R.layout.search) {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = RecyclerAdapter(list)
     }
-}
 
-fun getJson(context: Context, fileName: String): String? {
-    val jsonString: String
-    try {
-        jsonString = context.assets.open(fileName).bufferedReader().use { it.readText() }
-    } catch (ioException: IOException) {
-        ioException.printStackTrace()
-        return null
+    private fun getJson(context: Context, fileName: String): String? {
+        val jsonString: String
+        try {
+            jsonString = context.assets.open(fileName).bufferedReader().use { it.readText() }
+        } catch (ioException: IOException) {
+            ioException.printStackTrace()
+            return null
+        }
+        return jsonString
     }
-    return jsonString
+
+    private fun parseJson(json: String?): List<Event> {
+        val gson = Gson()
+        val listEventType = object : TypeToken<List<Event>>() {}.type
+        return gson.fromJson(json, listEventType)
+    }
 }
 
-fun parseJson(json: String?): List<Event> {
-
-    val gson = Gson()
-    val listEventType = object : TypeToken<List<Event>>() {}.type
-    return gson.fromJson(json, listEventType)
-}

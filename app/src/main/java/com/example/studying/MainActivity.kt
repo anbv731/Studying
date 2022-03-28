@@ -10,7 +10,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        if (savedInstanceState != null) {
+        if (savedInstanceState != null ) {
             authFragment =
                 supportFragmentManager.findFragmentByTag(AUTH_FRAGMENT_TAG) as AuthFragment
         }
