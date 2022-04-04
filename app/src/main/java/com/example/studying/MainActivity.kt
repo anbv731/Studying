@@ -16,29 +16,39 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     lateinit var button1: Button
     lateinit var button2: Button
+//    var authFragment=AuthFragment()
+//    private val AUTH_FRAGMENT_TAG = "myfragmenttag"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         button1 = binding.button1
         button2 = binding.button2
+        if (savedInstanceState != null) {
+            button1.visibility = View.GONE
+            button2.visibility = View.GONE
+        }
+//        if (savedInstanceState != null) {
+//            authFragment =
+//                supportFragmentManager.findFragmentByTag(AUTH_FRAGMENT_TAG) as AuthFragment
+//        }
         button1.setOnClickListener {
+            binding.fragmentContainer.visibility = View.VISIBLE
+            button1.visibility = View.GONE
+            button2.visibility = View.GONE
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, PositionsFragment(), null)
                 .commit()
         }
         button2.setOnClickListener {
-
-            binding.fragmentContainer.visibility= View.VISIBLE
-            button1.visibility=View.GONE
-            button2.visibility=View.GONE
+            binding.fragmentContainer.visibility = View.VISIBLE
+            button1.visibility = View.GONE
+            button2.visibility = View.GONE
             supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, PositionsFragment(), null)
+                .replace(R.id.fragmentContainer, StaffFragment(), null)
                 .commit()
+
         }
-
-
-
 
 
     }

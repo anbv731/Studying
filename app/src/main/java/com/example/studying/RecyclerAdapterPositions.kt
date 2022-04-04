@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class RecyclerAdapter(private val list: List<PositionEntity>) :
-    RecyclerView.Adapter<RecyclerAdapter.ContactViewHolder>() {
+class RecyclerAdapterPositions(private val list: List<PositionEntity>) :
+    RecyclerView.Adapter<RecyclerAdapterPositions.ContactViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
         val rootView =
             LayoutInflater.from(parent.context).inflate(R.layout.item, parent, false)
