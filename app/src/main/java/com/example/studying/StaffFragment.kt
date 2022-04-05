@@ -1,6 +1,7 @@
 package com.example.studying
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,56 +17,54 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 class StaffFragment : Fragment() {
     companion object {
         const val SCROLL = "SCROLL"
+        const val CONST = "CONST"
     }
+
     lateinit var binding: FragmentStaffBinding
     lateinit var recyclerView: RecyclerView
     lateinit var progressBar: ProgressBar
     lateinit var db: DataBase
+    lateinit var recyclerViewState:Parcelable
+
+    //lateinit var recyclerState:Bundle
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentStaffBinding.inflate(layoutInflater,container,false)
+        binding = FragmentStaffBinding.inflate(layoutInflater, container, false)
         recyclerView = binding.recyclerView
         progressBar = binding.progressBar
-        if(savedInstanceState!=null){
-//            recyclerView.layoutManager?.onRestoreInstanceState(savedInstanceState.getParcelable(
-//                SCROLL))
-            println("OUTPUT"+savedInstanceState.getInt(SCROLL))
-        }
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        progressBar.visibility = View.GONE
         db = Room.databaseBuilder(
             requireContext(),
             DataBase::class.java, "staff.db"
         ).build()
-        if (savedInstanceState==null) {
+        if (savedInstanceState == null) {
+            progressBar.visibility = View.VISIBLE
             val listStaff = mutableListOf<StaffEntity>(
-                StaffEntity(1, "John"),
-                StaffEntity(2, "Karl"),
-                StaffEntity(3, "Luk"),
-                StaffEntity(4, "Sir"),
-                StaffEntity(5, "Clark"),
-                StaffEntity(6, "Edmond"),
-                StaffEntity(7, "Joe"),
-                StaffEntity(8, "Peter"),
-                StaffEntity(9, "Karl"),
-                StaffEntity(10, "Luk"),
-                StaffEntity(11, "Sir"),
-                StaffEntity(12, "Clark"),
-                StaffEntity(13, "Edmond"),
-                StaffEntity(14, "Joe"),
-                StaffEntity(15, "Peter")
+                StaffEntity(1, "John","32","3"),
+                StaffEntity(2, "Karl","25","2"),
+                StaffEntity(3, "Luk","25","2"),
+                StaffEntity(4, "Sir","32","3"),
+                StaffEntity(5, "Clark","25","2"),
+                StaffEntity(6, "Edmond","32","3"),
+                StaffEntity(7, "Joe","25","2"),
+                StaffEntity(8, "Peter","32","3"),
+                StaffEntity(9, "Karl","32","3"),
+                StaffEntity(10, "Luk","25","2"),
+                StaffEntity(11, "Sir","32","3"),
+                StaffEntity(12, "Clark","32","3"),
+                StaffEntity(13, "Edmond","44","15"),
+                StaffEntity(14, "Joe","44","15"),
+                StaffEntity(15, "Peter","44","15")
             )
 
             db.positionStaffDao().insertAllStaffRx(listStaff)
                 .andThen { println(Thread.currentThread().name + " Thread for Insert") }
                 .subscribeOn(Schedulers.io())
                 .subscribe()
+
         }
         db.positionStaffDao().getAllStaffRx()
             .doAfterSuccess { println(Thread.currentThread().name + " Thread for getAll") }
@@ -77,14 +76,33 @@ class StaffFragment : Fragment() {
                 setList(emmiter)
             }
 
+        return binding.root
     }
+
     private fun setList(list: List<StaffEntity>) {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = RecyclerAdapterStaff(list)
     }
+
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt(SCROLL,5)
-        //outState.putParcelable(SCROLL, recyclerView.layoutManager?.onSaveInstanceState())
+        outState.putParcelable(SCROLL, recyclerView.layoutManager!!.onSaveInstanceState())
+
+
+        //outState.putInt(CONST, recyclerView.layoutManager.getPosition(view.findViewById(R.layout.item))))
+
         super.onSaveInstanceState(outState)
     }
-}
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        if (savedInstanceState != null) {
+            println("OUTPUT " + savedInstanceState.getInt(CONST))
+            recyclerView.layoutManager?.onRestoreInstanceState(
+                savedInstanceState.getParcelable(
+                    SCROLL
+                )
+            )
+
+        }
+    }
+    }

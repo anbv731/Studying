@@ -23,6 +23,6 @@ class RecyclerAdapterPositions(private val list: List<PositionEntity>) :
     }
 
     class ContactViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textViewTitle: TextView = itemView.findViewById(R.id.textTitle)
+        val textViewTitle: TextView = itemView.findViewById(R.id.textName)
     }
 }

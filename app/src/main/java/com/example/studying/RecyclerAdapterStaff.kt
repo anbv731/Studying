@@ -16,6 +16,8 @@ class RecyclerAdapterStaff(private val list: List<StaffEntity>) :
 
     override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
         holder.textViewTitle.text = (list.get(position).name)
+        holder.textAge.text = ("Age "+list.get(position).age)
+        holder.textExp.text = ("Experience "+list.get(position).experience)
     }
 
     override fun getItemCount(): Int {
@@ -23,6 +25,8 @@ class RecyclerAdapterStaff(private val list: List<StaffEntity>) :
     }
 
     class ContactViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textViewTitle: TextView = itemView.findViewById(R.id.textTitle)
+        val textViewTitle: TextView = itemView.findViewById(R.id.textName)
+        val textAge:TextView=itemView.findViewById(R.id.textAge)
+        val textExp:TextView=itemView.findViewById(R.id.textExp)
     }
 }

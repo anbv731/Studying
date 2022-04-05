@@ -11,10 +11,3 @@ data class PositionEntity(@PrimaryKey
                     val id:Int,
                           val name:String)
 
-@Entity(tableName = "staff")
-@TypeConverters(DateConverter::class)
-data class StaffEntity(
-    @PrimaryKey
-    val id:Int,
-    val name:String
-)
