@@ -24,9 +24,7 @@ class StaffFragment : Fragment() {
     lateinit var recyclerView: RecyclerView
     lateinit var progressBar: ProgressBar
     lateinit var db: DataBase
-    lateinit var recyclerViewState:Parcelable
 
-    //lateinit var recyclerState:Bundle
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -86,10 +84,6 @@ class StaffFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable(SCROLL, recyclerView.layoutManager!!.onSaveInstanceState())
-
-
-        //outState.putInt(CONST, recyclerView.layoutManager.getPosition(view.findViewById(R.layout.item))))
-
         super.onSaveInstanceState(outState)
     }
 

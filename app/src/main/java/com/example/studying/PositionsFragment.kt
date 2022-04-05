@@ -41,9 +41,6 @@ class PositionsFragment : Fragment() {
                 PositionEntity(1, "Dir"),
                 PositionEntity(2, "Buh"), PositionEntity(3, "Rab")
             )
-
-
-
             db.positionStaffDao().insertAllPositionRx(listPositions)
                 .andThen { println(Thread.currentThread().name + " Thread for Insert") }
                 .subscribeOn(Schedulers.io())
