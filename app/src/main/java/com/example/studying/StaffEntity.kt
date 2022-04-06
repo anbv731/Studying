@@ -5,7 +5,6 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 
 @Entity(tableName = "staff")
-@TypeConverters(DateConverter::class)
 data class StaffEntity(
     @PrimaryKey
     val id:Int,

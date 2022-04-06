@@ -17,7 +17,6 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 class StaffFragment : Fragment() {
     companion object {
         const val SCROLL = "SCROLL"
-        const val CONST = "CONST"
     }
 
     lateinit var binding: FragmentStaffBinding
@@ -33,29 +32,27 @@ class StaffFragment : Fragment() {
         binding = FragmentStaffBinding.inflate(layoutInflater, container, false)
         recyclerView = binding.recyclerView
         progressBar = binding.progressBar
-        progressBar.visibility = View.GONE
         db = Room.databaseBuilder(
             requireContext(),
             DataBase::class.java, "staff.db"
         ).build()
         if (savedInstanceState == null) {
-            progressBar.visibility = View.VISIBLE
-            val listStaff = mutableListOf<StaffEntity>(
-                StaffEntity(1, "John","32","3"),
-                StaffEntity(2, "Karl","25","2"),
-                StaffEntity(3, "Luk","25","2"),
-                StaffEntity(4, "Sir","32","3"),
-                StaffEntity(5, "Clark","25","2"),
-                StaffEntity(6, "Edmond","32","3"),
-                StaffEntity(7, "Joe","25","2"),
-                StaffEntity(8, "Peter","32","3"),
-                StaffEntity(9, "Karl","32","3"),
-                StaffEntity(10, "Luk","25","2"),
-                StaffEntity(11, "Sir","32","3"),
-                StaffEntity(12, "Clark","32","3"),
-                StaffEntity(13, "Edmond","44","15"),
-                StaffEntity(14, "Joe","44","15"),
-                StaffEntity(15, "Peter","44","15")
+            val listStaff = mutableListOf(
+                StaffEntity(1, "John", "32", "3"),
+                StaffEntity(2, "Karl", "25", "2"),
+                StaffEntity(3, "Luk", "25", "2"),
+                StaffEntity(4, "Sir", "32", "3"),
+                StaffEntity(5, "Clark", "25", "2"),
+                StaffEntity(6, "Edmond", "32", "3"),
+                StaffEntity(7, "Joe", "25", "2"),
+                StaffEntity(8, "Peter", "32", "3"),
+                StaffEntity(9, "Karl", "32", "3"),
+                StaffEntity(10, "Luk", "25", "2"),
+                StaffEntity(11, "Sir", "32", "3"),
+                StaffEntity(12, "Clark", "32", "3"),
+                StaffEntity(13, "Edmond", "44", "15"),
+                StaffEntity(14, "Joe", "44", "15"),
+                StaffEntity(15, "Peter", "44", "15")
             )
 
             db.positionStaffDao().insertAllStaffRx(listStaff)
@@ -72,6 +69,11 @@ class StaffFragment : Fragment() {
             .subscribe { emmiter ->
                 progressBar.visibility = View.GONE
                 setList(emmiter)
+                if (savedInstanceState != null) {
+                    recyclerView.layoutManager?.onRestoreInstanceState(
+                        savedInstanceState.getParcelable(SCROLL)!!
+                    )
+                }
             }
 
         return binding.root
@@ -83,20 +85,8 @@ class StaffFragment : Fragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putParcelable(SCROLL, recyclerView.layoutManager!!.onSaveInstanceState())
+        outState.putParcelable(SCROLL, recyclerView.layoutManager!!.onSaveInstanceState()!!)
         super.onSaveInstanceState(outState)
     }
 
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        if (savedInstanceState != null) {
-            println("OUTPUT " + savedInstanceState.getInt(CONST))
-            recyclerView.layoutManager?.onRestoreInstanceState(
-                savedInstanceState.getParcelable(
-                    SCROLL
-                )
-            )
-
-        }
-    }
-    }
+}
